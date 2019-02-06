@@ -336,7 +336,8 @@ _rd_adhoc()
         *)
             COMPREPLY=(${COMPREPLY[@]} \
                 $( compgen \
-                -W "--filter -F --follow -f --keepgoing -K --outformat --progress -r --project -p --quiet -q --restart -t --script -s --stdin -S --tail -T --threadcount --url -u --verbose -v" \
+                -W "--filter -F --follow -f --keepgoing -K --outformat --progress -r --project -p --quiet -q \
+                --restart -t --script -s --stdin -S --tail -T --threadcount --url -u --verbose -v" \
                 -- ${cur} ))
             ;;
     esac
@@ -351,7 +352,8 @@ _rd_retry()
         *)
             COMPREPLY=(${COMPREPLY[@]} \
                 $( compgen \
-                -W "--eid -e --failedNodes -F --follow -f --id -i --job -j --loglevel -l --outformat --progress -r --project -p --quiet -q --raw --restart -t --tail -T --user -u" \
+                -W "--eid -e --failedNodes -F --follow -f --id -i --job -j --loglevel -l --outformat --progress -r \
+                --project -p --quiet -q --raw --restart -t --tail -T --user -u" \
                 -- ${cur} ))
             ;;
     esac
@@ -366,15 +368,17 @@ _rd_run()
         -*)
             COMPREPLY=(${COMPREPLY[@]} \
                 $( compgen \
-                -W "--filter -F --follow -f --id -i --job -j --loglevel -l --outformat --progress -r --project -p --quiet -q --raw --restart -t --at --delay -d --tail -T --user -u" \
+                -W "--filter -F --follow -f --id -i --job -j --loglevel -l --outformat --progress -r \
+                --project -p --quiet -q --raw --restart -t --at --delay -d --tail -T --user -u" \
                 -- ${cur} ))
             ;;
         *)
-            COMPREPLY=($( compgen -W "" -- ${cur} ))
-            # No fine solution to get list of jobs yet :(
-            # local rd="${COMP_WORDS[0]}"
-            # local jobslist="$(${rd} jobs list 2>/dev/null | cut -f2- -d ' ')"
-            # COMPREPLY=($( compgen -W "${jobslist// /_}" -- ${cur} ))
+            local rd="${COMP_WORDS[0]}"
+            # Set separator to EOL, this won't breate our lines to words
+            local IFS=$'\n'
+            # Generate list of jobs, only containing job name
+            local jobslist="$(${rd} jobs list --outformat %name 2>/dev/null)"
+            COMPREPLY=($( compgen -W "${jobslist}" -- ${cur} ))
             ;;
     esac
 }
